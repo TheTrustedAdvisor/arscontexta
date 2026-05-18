@@ -52,8 +52,11 @@ Extract insights from source material with domain-native categories.
 3. Move processed source to archive/
 4. Create task entries for reflect phase
 
+**File naming:** The filename IS the prose-proposition title with `.md` extension. Never use kebab-case, snake_case, or abbreviated filenames. Example: `The Two-Zone model enables automatic label-to-zone mapping.md` — not `two-zone-model.md`. This is critical because wiki-links resolve by matching the H1 title against filenames.
+
 **Quality gates:**
 - Title passes composability test: `since [[title]]` reads naturally
+- Filename matches the H1 title exactly (plus `.md`)
 - Description adds information beyond title (~150 chars)
 - Body uses connective words showing reasoning
 - Source is attributed
@@ -101,6 +104,8 @@ Challenge system assumptions. Triage accumulated observations and tensions.
 4. Delegate structural changes to @ars-contexta:vault-architect
 
 ## Note Creation Template
+
+Save as `notes/{prose-as-title proposition}.md` — the filename must be the full prose title.
 
 ```markdown
 ---

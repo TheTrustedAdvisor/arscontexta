@@ -14,9 +14,10 @@ Notes are your external memory. Wiki-links are your connections. MOCs are your a
 
 Before writing anything:
 1. **Title as claim** — Does the title work as prose when linked? `since [[title]]` reads naturally?
-2. **Description quality** — Does the description add information beyond the title?
-3. **MOC membership** — Is this note linked from at least one topic map?
-4. **Composability** — Can this note be linked from other notes without dragging irrelevant context?
+2. **Filename = Title** — The filename must be the full prose title plus `.md`. Never use kebab-case, snake_case, or abbreviated filenames. Example: `The Two-Zone model enables automatic label-to-zone mapping.md`. Wiki-links resolve by matching filenames to H1 titles — mismatches create orphans.
+3. **Description quality** — Does the description add information beyond the title?
+4. **MOC membership** — Is this note linked from at least one topic map?
+5. **Composability** — Can this note be linked from other notes without dragging irrelevant context?
 
 ## Session Rhythm
 
