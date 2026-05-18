@@ -1,6 +1,6 @@
 # Ars Contexta — Knowledge Management Plugin for GitHub Copilot
 
-Research-backed knowledge management system that transforms raw material into connected, discoverable knowledge. Portable vaults work across GitHub Copilot and Claude Code.
+Research-backed knowledge management system that transforms raw material into connected, discoverable knowledge. Portable vaults work across GitHub Copilot, Claude Code, and Obsidian.
 
 ## Architecture
 
@@ -49,6 +49,82 @@ graph TB
     style Notes fill:#e8f5e9
     style Ops fill:#fff3e0
     style Inbox fill:#e3f2fd
+```
+
+## Quick Start
+
+### Option 1: Install as Copilot Plugin (recommended)
+
+```bash
+npm install -g ars-contexta-copi
+```
+
+Then add to your MCP config (`~/.copilot/mcp-config.json`):
+
+```json
+{
+  "mcpServers": {
+    "ars-contexta": {
+      "command": "ars-contexta"
+    }
+  }
+}
+```
+
+### Option 2: npx (no install)
+
+```json
+{
+  "mcpServers": {
+    "ars-contexta": {
+      "command": "npx",
+      "args": ["ars-contexta-copi"]
+    }
+  }
+}
+```
+
+### Option 3: From source (contributors)
+
+```bash
+git clone https://github.com/TheTrustedAdvisor/arscontexta.git
+cd arscontexta
+npm install          # builds automatically via prepare script
+```
+
+Then point your MCP config at the local build:
+
+```json
+{
+  "mcpServers": {
+    "ars-contexta": {
+      "command": "node",
+      "args": ["/path/to/arscontexta/dist/server.js"]
+    }
+  }
+}
+```
+
+### Option 4: Per-session (Copilot CLI)
+
+```bash
+copilot --additional-mcp-config @.copilot/mcp-config.json
+```
+
+## Copilot Chat (VS Code)
+
+Add the plugin directory to your workspace and invoke `@ars-contexta` in Copilot Chat for interactive vault management.
+
+## Usage
+
+Once the MCP server is connected, Copilot can manage your knowledge vault:
+
+```
+> Initialize a research vault in ./my-vault
+> Reduce this document into atomic claims: docs/architecture.md
+> Show vault health
+> Find clusters in the knowledge graph
+> Search for notes about "data sovereignty"
 ```
 
 ## Processing Pipeline (6R)
@@ -111,75 +187,16 @@ graph TB
     style Interface fill:#e3f2fd
 ```
 
-## Wiki-Link Graph
-
-```mermaid
-graph LR
-    A["Die Plattform nutzt\nZwei-Zonen-Modell"] --> B["Restricted Zone bietet\nDatensouveränität"]
-    A --> C["Sensitivity Labels\nsteuern Zonenzuordnung"]
-    B --> D["Pseudonymisierung\nin Restricted Zone"]
-    C --> E["Purview DLP blockiert\nZonenverstösse"]
-    C --> B
-    
-    MOC["[[Architektur]]"] --> A & B & C & D & E
-
-    style MOC fill:#fff3e0,stroke:#ff9800
-    style A fill:#e8f5e9
-    style B fill:#e8f5e9
-    style C fill:#e8f5e9
-    style D fill:#e8f5e9
-    style E fill:#e8f5e9
-```
-
-## Prerequisites
-
-- Node.js >= 20
-- GitHub Copilot CLI >= 1.0.48
-
-## Installation
-
-```bash
-git clone https://github.com/TheTrustedAdvisor/arscontexta.git
-cd arscontexta
-npm install
-npm run build
-```
-
-## Connect to Copilot CLI
-
-The plugin provides an MCP server. Configure it in your Copilot session:
-
-```bash
-copilot --additional-mcp-config @.copilot/mcp-config.json
-```
-
-Or add to your global `~/.copilot/mcp-config.json`:
-
-```json
-{
-  "mcpServers": {
-    "ars-contexta": {
-      "command": "node",
-      "args": ["/path/to/arscontexta/dist/server.js"]
-    }
-  }
-}
-```
-
-## Copilot Chat (VS Code)
-
-Install the plugin directory and invoke `@ars-contexta` in Copilot Chat for interactive vault management.
-
 ## MCP Tools
 
 | Tool | Description |
 |------|-------------|
-| `vault-init` | Initialize a new vault with three-space architecture |
-| `schema-validate` | Validate a note file against vault schema |
-| `graph-query` | Query the wiki-link graph: orphans, backlinks, density, clusters, suggestions |
-| `health-check` | Run vault diagnostics: schema, orphans, links, descriptions |
-| `note-search` | Search notes by title, content, or frontmatter |
-| `tree-inject` | Get the vault directory tree for context injection |
+| `setup` | Initialize a new vault with three-space architecture |
+| `validate` | Validate a note file against vault schema |
+| `graph` | Query the wiki-link graph: orphans, backlinks, density, clusters, suggestions |
+| `health` | Run vault diagnostics: schema, orphans, links, descriptions |
+| `search` | Search notes by title, content, or frontmatter |
+| `tree` | Get the vault directory tree for context injection |
 
 ## Agents
 
@@ -252,14 +269,24 @@ Topics:
 - [[Architektur]]
 ```
 
-## Development
+## Wiki-Link Graph
 
-```bash
-npm run typecheck    # Type-check without emitting
-npm run build        # Bundle with tsup
-npm test             # Run 91 unit tests
-npm run lint         # ESLint
-node test/e2e-smoke.mjs  # E2E integration test
+```mermaid
+graph LR
+    A["Die Plattform nutzt\nZwei-Zonen-Modell"] --> B["Restricted Zone bietet\nDatensouveränität"]
+    A --> C["Sensitivity Labels\nsteuern Zonenzuordnung"]
+    B --> D["Pseudonymisierung\nin Restricted Zone"]
+    C --> E["Purview DLP blockiert\nZonenverstösse"]
+    C --> B
+    
+    MOC["[[Architektur]]"] --> A & B & C & D & E
+
+    style MOC fill:#fff3e0,stroke:#ff9800
+    style A fill:#e8f5e9
+    style B fill:#e8f5e9
+    style C fill:#e8f5e9
+    style D fill:#e8f5e9
+    style E fill:#e8f5e9
 ```
 
 ## Vault Portability
@@ -297,6 +324,17 @@ Tested with Copilot CLI against real enterprise documentation (KTZH Datenplattfo
 | Description quality | PASS | PASS |
 | Avg link degree | 4.9 | 2-4 |
 | Health score | 5/5 PASS | 5/5 |
+
+## Development
+
+```bash
+git clone https://github.com/TheTrustedAdvisor/arscontexta.git
+cd arscontexta
+npm install              # builds automatically
+npm test                 # 91 unit tests
+npm run typecheck        # TypeScript check
+node test/e2e-smoke.mjs  # E2E integration test
+```
 
 ## License
 

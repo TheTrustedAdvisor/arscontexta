@@ -27,12 +27,12 @@ await waitFor(0);
 send({ jsonrpc: '2.0', method: 'notifications/initialized' });
 
 const tools = [
-  [1, 'graph-query', { query: 'stats', vaultPath: VAULT }],
-  [2, 'graph-query', { query: 'orphans', vaultPath: VAULT }],
-  [3, 'graph-query', { query: 'density', vaultPath: VAULT }],
-  [4, 'health-check', { mode: 'full', vaultPath: VAULT }],
-  [5, 'graph-query', { query: 'clusters', vaultPath: VAULT }],
-  [6, 'graph-query', { query: 'suggestions', vaultPath: VAULT }],
+  [1, 'graph', { query: 'stats', vaultPath: VAULT }],
+  [2, 'graph', { query: 'orphans', vaultPath: VAULT }],
+  [3, 'graph', { query: 'density', vaultPath: VAULT }],
+  [4, 'health', { mode: 'full', vaultPath: VAULT }],
+  [5, 'graph', { query: 'clusters', vaultPath: VAULT }],
+  [6, 'graph', { query: 'suggestions', vaultPath: VAULT }],
 ];
 
 for (const [id, name, args] of tools) {

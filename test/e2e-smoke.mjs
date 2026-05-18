@@ -92,35 +92,35 @@ async function run() {
 
   const toolsResp = await waitForResponse(serverProcess, 2);
   const toolNames = toolsResp.result.tools.map(t => t.name).sort();
-  const expected = ['graph-query', 'health-check', 'note-search', 'schema-validate', 'tree-inject', 'vault-init'];
+  const expected = ['graph', 'health', 'search', 'setup', 'tree', 'validate'];
   assert(JSON.stringify(toolNames) === JSON.stringify(expected), `Expected tools: ${expected.join(', ')}\nGot: ${toolNames.join(', ')}`);
   console.log(`  ✓ Tools listed: ${toolNames.join(', ')}`);
 
-  // Step 3: vault-init
-  console.log('  → Calling vault-init...');
+  // Step 3: setup
+  console.log('  → Calling setup...');
   sendMessage(serverProcess, {
     jsonrpc: '2.0',
     id: 3,
     method: 'tools/call',
     params: {
-      name: 'vault-init',
+      name: 'setup',
       arguments: { preset: 'research', vaultPath: tmpDir },
     },
   });
 
   const initVaultResp = await waitForResponse(serverProcess, 3);
   const initText = initVaultResp.result.content[0].text;
-  assert(initText.includes('Vault initialized successfully'), `vault-init should succeed, got: ${initText}`);
-  console.log('  ✓ vault-init OK');
+  assert(initText.includes('Vault initialized successfully'), `setup should succeed, got: ${initText}`);
+  console.log('  ✓ setup OK');
 
-  // Step 4: vault-init again — overwrite protection
-  console.log('  → Calling vault-init again (overwrite protection)...');
+  // Step 4: setup again — overwrite protection
+  console.log('  → Calling setup again (overwrite protection)...');
   sendMessage(serverProcess, {
     jsonrpc: '2.0',
     id: 4,
     method: 'tools/call',
     params: {
-      name: 'vault-init',
+      name: 'setup',
       arguments: { preset: 'research', vaultPath: tmpDir },
     },
   });
@@ -130,91 +130,91 @@ async function run() {
   assert(overwriteText.includes('already exists'), `Should block overwrite, got: ${overwriteText}`);
   console.log('  ✓ Overwrite protection OK');
 
-  // Step 5: tree-inject
-  console.log('  → Calling tree-inject...');
+  // Step 5: tree
+  console.log('  → Calling tree...');
   sendMessage(serverProcess, {
     jsonrpc: '2.0',
     id: 5,
     method: 'tools/call',
     params: {
-      name: 'tree-inject',
+      name: 'tree',
       arguments: { vaultPath: tmpDir, depth: 2 },
     },
   });
 
   const treeResp = await waitForResponse(serverProcess, 5);
   const treeText = treeResp.result.content[0].text;
-  assert(treeText.includes('Vault Structure'), `tree-inject should return structure, got: ${treeText}`);
+  assert(treeText.includes('Vault Structure'), `tree should return structure, got: ${treeText}`);
   assert(treeText.includes('notes/'), 'Should contain notes directory');
-  console.log('  ✓ tree-inject OK');
+  console.log('  ✓ tree OK');
 
-  // Step 6: health-check
-  console.log('  → Calling health-check (quick)...');
+  // Step 6: health
+  console.log('  → Calling health (quick)...');
   sendMessage(serverProcess, {
     jsonrpc: '2.0',
     id: 6,
     method: 'tools/call',
     params: {
-      name: 'health-check',
+      name: 'health',
       arguments: { mode: 'quick', vaultPath: tmpDir },
     },
   });
 
   const healthResp = await waitForResponse(serverProcess, 6);
   const healthText = healthResp.result.content[0].text;
-  assert(healthText.includes('Vault Health Report'), `health-check should return report, got: ${healthText}`);
-  console.log('  ✓ health-check OK');
+  assert(healthText.includes('Vault Health Report'), `health should return report, got: ${healthText}`);
+  console.log('  ✓ health OK');
 
-  // Step 7: schema-validate
-  console.log('  → Calling schema-validate...');
+  // Step 7: validate
+  console.log('  → Calling validate...');
   sendMessage(serverProcess, {
     jsonrpc: '2.0',
     id: 7,
     method: 'tools/call',
     params: {
-      name: 'schema-validate',
+      name: 'validate',
       arguments: { filePath: join(tmpDir, 'notes', 'index.md') },
     },
   });
 
   const schemaResp = await waitForResponse(serverProcess, 7);
   const schemaText = schemaResp.result.content[0].text;
-  assert(schemaText.includes('index.md'), `schema-validate should reference index.md, got: ${schemaText}`);
-  console.log('  ✓ schema-validate OK');
+  assert(schemaText.includes('index.md'), `validate should reference index.md, got: ${schemaText}`);
+  console.log('  ✓ validate OK');
 
-  // Step 8: graph-query stats
-  console.log('  → Calling graph-query (stats)...');
+  // Step 8: graph stats
+  console.log('  → Calling graph (stats)...');
   sendMessage(serverProcess, {
     jsonrpc: '2.0',
     id: 8,
     method: 'tools/call',
     params: {
-      name: 'graph-query',
+      name: 'graph',
       arguments: { query: 'stats', vaultPath: tmpDir },
     },
   });
 
   const graphResp = await waitForResponse(serverProcess, 8);
   const graphText = graphResp.result.content[0].text;
-  assert(graphText.includes('Vault Statistics'), `graph-query should return stats, got: ${graphText}`);
-  console.log('  ✓ graph-query OK');
+  assert(graphText.includes('Vault Statistics'), `graph should return stats, got: ${graphText}`);
+  console.log('  ✓ graph OK');
 
-  // Step 9: note-search
-  console.log('  → Calling note-search...');
+  // Step 9: search
+  console.log('  → Calling search...');
   sendMessage(serverProcess, {
     jsonrpc: '2.0',
     id: 9,
     method: 'tools/call',
     params: {
-      name: 'note-search',
+      name: 'search',
       arguments: { query: 'Index', vaultPath: tmpDir, scope: 'all' },
     },
   });
 
   const searchResp = await waitForResponse(serverProcess, 9);
   const searchText = searchResp.result.content[0].text;
-  assert(searchText.includes('Index') || searchText.includes('index'), `note-search should find Index, got: ${searchText}`);
-  console.log('  ✓ note-search OK');
+  assert(searchText.includes('Index') || searchText.includes('index'), `search should find Index, got: ${searchText}`);
+  console.log('  ✓ search OK');
 
   console.log('\n✓ All E2E smoke tests passed!');
 }

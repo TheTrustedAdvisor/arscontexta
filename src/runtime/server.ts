@@ -15,7 +15,7 @@ const server = new McpServer({
 });
 
 server.tool(
-  'vault-init',
+  'setup',
   'Initialize a new Ars Contexta vault with three-space architecture',
   {
     preset: z.enum(['research', 'personal-assistant', 'experimental']).describe('Vault preset type'),
@@ -32,7 +32,7 @@ server.tool(
 );
 
 server.tool(
-  'schema-validate',
+  'validate',
   'Validate a note file against vault schema requirements',
   {
     filePath: z.string().describe('Path to the markdown file to validate'),
@@ -46,7 +46,7 @@ server.tool(
 );
 
 server.tool(
-  'graph-query',
+  'graph',
   'Query the vault wiki-link graph: orphans, backlinks, density, traversal',
   {
     query: z.enum(['orphans', 'backlinks', 'density', 'stats', 'traverse', 'clusters', 'suggestions']).describe('Type of graph query'),
@@ -62,7 +62,7 @@ server.tool(
 );
 
 server.tool(
-  'tree-inject',
+  'tree',
   'Get the vault directory tree for context injection',
   {
     vaultPath: z.string().default('.').describe('Root path of the vault'),
@@ -76,7 +76,7 @@ server.tool(
 );
 
 server.tool(
-  'health-check',
+  'health',
   'Run vault health diagnostics: schema, orphans, links, descriptions',
   {
     mode: z.enum(['quick', 'full', 'three-space']).default('quick').describe('Diagnostic mode'),
@@ -90,7 +90,7 @@ server.tool(
 );
 
 server.tool(
-  'note-search',
+  'search',
   'Search vault notes by title, content, or frontmatter fields',
   {
     query: z.string().describe('The search term'),
