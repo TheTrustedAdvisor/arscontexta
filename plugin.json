@@ -1,0 +1,36 @@
+{
+  "name": "ars-contexta",
+  "version": "0.1.0",
+  "description": "Research-backed knowledge management system for GitHub Copilot. Derives cognitive architectures from conversational setup. Portable vaults between Copilot and Claude Code.",
+  "publisher": "agenticnotetaking",
+  "license": "MIT",
+  "agents": [
+    ".github/agents/vault-architect.agent.md",
+    ".github/agents/processor.agent.md",
+    ".github/agents/knowledge-guide.agent.md",
+    ".github/agents/health-checker.agent.md",
+    ".github/agents/graph-analyst.agent.md"
+  ],
+  "skills": [
+    ".github/skills/setup/SKILL.md",
+    ".github/skills/reduce/SKILL.md",
+    ".github/skills/reflect/SKILL.md",
+    ".github/skills/reweave/SKILL.md",
+    ".github/skills/verify/SKILL.md",
+    ".github/skills/pipeline/SKILL.md",
+    ".github/skills/health/SKILL.md",
+    ".github/skills/graph/SKILL.md",
+    ".github/skills/add-domain/SKILL.md",
+    ".github/skills/reseed/SKILL.md",
+    ".github/skills/help/SKILL.md",
+    ".github/skills/ask/SKILL.md",
+    ".github/skills/upgrade/SKILL.md",
+    ".github/skills/tutorial/SKILL.md",
+    ".github/skills/recommend/SKILL.md",
+    ".github/skills/architect/SKILL.md",
+    ".github/skills/rethink/SKILL.md"
+  ],
+  "hooks": ".github/hooks/hooks.json",
+  "mcp": ".copilot/mcp-config.json",
+  "instructions": ".github/copilot-instructions.md"
+}

@@ -1,0 +1,4 @@
+agents:
+  - name: ars-contexta
+    description: "Ars Contexta knowledge management - setup, process, and query your vault"
+    instructions_file: .github/copilot-instructions.md

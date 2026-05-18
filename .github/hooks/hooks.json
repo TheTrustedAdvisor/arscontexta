@@ -1,0 +1,20 @@
+[
+  {
+    "event": "SessionStart",
+    "command": "bash .github/hooks/session-orient.sh",
+    "description": "Inject vault tree structure and load agent identity at session start"
+  },
+  {
+    "event": "PostToolUse",
+    "matcher": {
+      "tool": "edit"
+    },
+    "command": "bash .github/hooks/write-validate.sh \"$FILEPATH\"",
+    "description": "Validate note schema after any file write in the vault"
+  },
+  {
+    "event": "SessionEnd",
+    "command": "bash .github/hooks/session-capture.sh",
+    "description": "Persist session state and capture learnings"
+  }
+]

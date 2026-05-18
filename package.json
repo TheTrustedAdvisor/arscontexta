@@ -1,0 +1,29 @@
+{
+  "name": "ars-contexta-copi",
+  "version": "0.1.0",
+  "description": "Ars Contexta knowledge management plugin for GitHub Copilot",
+  "type": "module",
+  "license": "MIT",
+  "author": "agenticnotetaking",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "validate": "npm run typecheck && npm run lint && npm run build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "eslint": "^9.27.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

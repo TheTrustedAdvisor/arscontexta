@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "ars-contexta": {
+      "command": "node",
+      "args": ["dist/server.js"],
+      "description": "Ars Contexta vault operations: init, validate, graph query, tree inject, health check"
+    }
+  }
+}
