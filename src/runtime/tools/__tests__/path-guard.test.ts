@@ -51,4 +51,34 @@ describe('safeVaultPath', () => {
     const vaultPath = resolve(cwd, 'test-vault');
     expect(safeVaultPath(vaultPath)).toBe(vaultPath);
   });
+
+  it('throws when vault path escapes working directory', () => {
+    expect(() => safeVaultPath('/tmp/outside-cwd')).toThrow(
+      'Vault path must be within or below working directory',
+    );
+  });
+
+  it('throws on sibling directory prefix attack', () => {
+    const cwd = resolve('.');
+    expect(() => safeVaultPath(cwd + '-evil')).toThrow(
+      'Vault path must be within or below working directory',
+    );
+  });
+
+  it('allows cwd itself as vault path', () => {
+    const cwd = resolve('.');
+    expect(safeVaultPath('.')).toBe(cwd);
+  });
+
+  it('throws on null byte injection', () => {
+    expect(() => safeVaultPath('vault\0path')).toThrow('contains null byte');
+  });
+});
+
+describe('assertContained null byte rejection', () => {
+  it('throws on null byte in target path', () => {
+    expect(() => assertContained('/tmp/vault', 'notes/\0evil.md')).toThrow(
+      'contains null byte',
+    );
+  });
 });

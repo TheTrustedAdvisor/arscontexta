@@ -39,8 +39,8 @@ server.tool(
   },
   async ({ filePath }) => {
     const safePath = safeVaultPath('.');
-    assertContained(safePath, filePath);
-    const result = await schemaValidate({ filePath });
+    const resolvedFile = assertContained(safePath, filePath);
+    const result = await schemaValidate({ filePath: resolvedFile });
     return { content: [{ type: 'text' as const, text: result }] };
   },
 );
@@ -112,4 +112,7 @@ async function main() {
   await server.connect(transport);
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error('MCP server failed to start:', err.message);
+  process.exitCode = 1;
+});

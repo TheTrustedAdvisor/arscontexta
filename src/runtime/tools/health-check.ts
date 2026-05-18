@@ -1,7 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join, basename } from 'node:path';
 import { parseFrontmatter, extractTitle, findNotesDir, findContentDirs, MIN_DESCRIPTION_LENGTH } from './shared.js';
-import { MAX_FILES } from './path-guard.js';
+import { MAX_FILES, MAX_FILE_SIZE } from './path-guard.js';
 
 interface HealthCheckOptions {
   mode: 'quick' | 'full' | 'three-space';
@@ -22,6 +22,7 @@ async function loadMarkdownFiles(dirPath: string): Promise<Map<string, string>> 
     const mdFiles = entries.filter(f => f.endsWith('.md')).slice(0, MAX_FILES);
     for (const f of mdFiles) {
       const content = await readFile(join(dirPath, f), 'utf-8');
+      if (content.length > MAX_FILE_SIZE) continue;
       files.set(f, content);
     }
   } catch (err: unknown) {

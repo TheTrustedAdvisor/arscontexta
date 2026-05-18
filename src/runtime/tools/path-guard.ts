@@ -1,6 +1,13 @@
 import { resolve, relative } from 'node:path';
 
+function rejectNullBytes(value: string, label: string): void {
+  if (value.includes('\0')) {
+    throw new Error(`Invalid ${label}: contains null byte`);
+  }
+}
+
 export function assertContained(basePath: string, targetPath: string): string {
+  rejectNullBytes(targetPath, 'path');
   const resolvedBase = resolve(basePath);
   const resolvedTarget = resolve(resolvedBase, targetPath);
   const rel = relative(resolvedBase, resolvedTarget);
@@ -11,10 +18,10 @@ export function assertContained(basePath: string, targetPath: string): string {
 }
 
 export function safeVaultPath(vaultPath: string): string {
+  rejectNullBytes(vaultPath, 'vault path');
   const resolved = resolve(vaultPath);
   const cwd = resolve('.');
-  const rel = relative(cwd, resolved);
-  if (rel.startsWith('..') && !resolved.startsWith(cwd)) {
+  if (resolved !== cwd && !resolved.startsWith(cwd + '/')) {
     throw new Error(`Vault path must be within or below working directory: ${vaultPath}`);
   }
   return resolved;

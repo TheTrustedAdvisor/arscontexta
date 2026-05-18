@@ -30,6 +30,7 @@ async function loadNotes(vaultPath: string, notesDir: string): Promise<Map<strin
   for (const file of files) {
     const filePath = join(dir, file);
     const content = await readFile(filePath, 'utf-8');
+    if (content.length > MAX_FILE_SIZE) continue;
     const title = extractTitle(content) || basename(file, '.md');
     const outLinks = extractWikiLinks(content);
     const fields = parseFrontmatter(content);

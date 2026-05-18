@@ -1,6 +1,6 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join, basename } from 'node:path';
-import { extractTitle, parseFrontmatter, findNotesDir } from './shared.js';
+import { extractTitle, parseFrontmatter, findNotesDir, findContentDirs } from './shared.js';
 import { MAX_FILES, MAX_FILE_SIZE } from './path-guard.js';
 
 type SearchScope = 'title' | 'content' | 'frontmatter' | 'all';
@@ -37,8 +37,10 @@ function stripFrontmatter(content: string): string {
 function countMatches(text: string, pattern: RegExp): { count: number; indices: number[] } {
   const indices: number[] = [];
   let match: RegExpExecArray | null;
-  while ((match = pattern.exec(text)) !== null) {
+  const MAX_MATCHES = 1000;
+  while ((match = pattern.exec(text)) !== null && indices.length < MAX_MATCHES) {
     indices.push(match.index);
+    if (match[0].length === 0) break;
   }
   return { count: indices.length, indices };
 }
@@ -83,26 +85,29 @@ export async function noteSearch(options: NoteSearchOptions): Promise<string> {
     return 'Search query cannot be empty.';
   }
 
-  const notesDir = await findNotesDir(vaultPath);
-  if (!notesDir) {
-    return 'No notes directory found. Initialize a vault first.';
+  const contentDirs = await findContentDirs(vaultPath);
+  if (contentDirs.length === 0) {
+    const notesDir = await findNotesDir(vaultPath);
+    if (!notesDir) return 'No notes directory found. Initialize a vault first.';
+    contentDirs.push(notesDir);
   }
 
-  const dir = join(vaultPath, notesDir);
-  let files: string[];
-  try {
-    files = (await readdir(dir)).filter(f => f.endsWith('.md')).slice(0, MAX_FILES);
-  } catch {
-    return `Cannot read notes directory: ${notesDir}/`;
+  const allFiles: { dir: string; file: string }[] = [];
+  for (const dirName of contentDirs) {
+    try {
+      const entries = (await readdir(join(vaultPath, dirName))).filter(f => f.endsWith('.md'));
+      for (const f of entries) allFiles.push({ dir: dirName, file: f });
+    } catch { /* skip unreadable dirs */ }
   }
+  const cappedFiles = allFiles.slice(0, MAX_FILES);
 
   const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const pattern = new RegExp(escapedQuery, 'gi');
 
   const results: SearchResult[] = [];
 
-  for (const file of files) {
-    const filePath = join(dir, file);
+  for (const { dir: dirName, file } of cappedFiles) {
+    const filePath = join(vaultPath, dirName, file);
     let content: string;
     try {
       content = await readFile(filePath, 'utf-8');
