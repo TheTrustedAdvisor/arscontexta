@@ -50,6 +50,19 @@ Before session ends:
 | Processing state | ops/ | Queue state, session logs |
 | Friction signals | ops/observations/ | Search failures, methodology improvements |
 
+## MCP Tools
+
+The `ars-contexta` MCP server provides these tools:
+
+| Tool | Description |
+|------|-------------|
+| `setup` | Initialize a new vault with three-space architecture |
+| `validate` | Validate a note file against vault schema |
+| `graph` | Query the wiki-link graph: orphans, backlinks, density, traverse, clusters, suggestions |
+| `health` | Run vault diagnostics: schema, orphans, links, descriptions |
+| `search` | Search notes by title, content, frontmatter, or all |
+| `tree` | Get the vault directory tree for context injection |
+
 ## Available Agents
 
 | Agent | Purpose |

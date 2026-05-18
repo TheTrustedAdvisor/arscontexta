@@ -51,40 +51,17 @@ graph TB
     style Inbox fill:#e3f2fd
 ```
 
-## Quick Start
+## Install
 
-### Option 1: Install as Copilot Plugin (recommended)
-
+One command:
 ```bash
-npm install -g ars-contexta-copi
+copilot plugin install TheTrustedAdvisor/arscontexta
 ```
 
-Then add to your MCP config (`~/.copilot/mcp-config.json`):
+That's it. 5 agents + 17 skills + 6 MCP tools, ready to use.
 
-```json
-{
-  "mcpServers": {
-    "ars-contexta": {
-      "command": "ars-contexta"
-    }
-  }
-}
-```
-
-### Option 2: npx (no install)
-
-```json
-{
-  "mcpServers": {
-    "ars-contexta": {
-      "command": "npx",
-      "args": ["ars-contexta-copi"]
-    }
-  }
-}
-```
-
-### Option 3: From source (contributors)
+<details>
+<summary>Alternative: From source (contributors)</summary>
 
 ```bash
 git clone https://github.com/TheTrustedAdvisor/arscontexta.git
@@ -104,27 +81,18 @@ Then point your MCP config at the local build:
   }
 }
 ```
-
-### Option 4: Per-session (Copilot CLI)
-
-```bash
-copilot --additional-mcp-config @.copilot/mcp-config.json
-```
-
-## Copilot Chat (VS Code)
-
-Add the plugin directory to your workspace and invoke `@ars-contexta` in Copilot Chat for interactive vault management.
+</details>
 
 ## Usage
 
-Once the MCP server is connected, Copilot can manage your knowledge vault:
-
 ```
-> Initialize a research vault in ./my-vault
-> Reduce this document into atomic claims: docs/architecture.md
-> Show vault health
-> Find clusters in the knowledge graph
-> Search for notes about "data sovereignty"
+> /setup                    — Initialize a research vault
+> /reduce docs/report.md    — Extract atomic claims from source material
+> /reflect                  — Find connections, update MOCs
+> /reweave                  — Update older notes with new context
+> /pipeline docs/report.md  — End-to-end: reduce → reflect → reweave → verify
+> /health full              — Run vault diagnostics
+> /graph clusters           — Find topic clusters in the knowledge graph
 ```
 
 ## Processing Pipeline (6R)
@@ -225,12 +193,14 @@ graph LR
 | `health-checker` | Diagnostics, schema validation |
 | `graph-analyst` | Graph analysis, orphans, connections |
 
-## Skills
+## Skills (17)
 
-**Processing:** `/setup`, `/reduce`, `/reflect`, `/reweave`, `/verify`, `/pipeline`, `/rethink`
-**Analysis:** `/health`, `/graph`
-**Architecture:** `/architect`, `/add-domain`, `/reseed`, `/upgrade`, `/recommend`
-**Learning:** `/help`, `/ask`, `/tutorial`
+| Category | Skills | Description |
+|----------|--------|-------------|
+| **Processing** | `/setup`, `/reduce`, `/reflect`, `/reweave`, `/verify`, `/pipeline`, `/rethink` | Full 6R pipeline: record → reduce → reflect → reweave → verify → rethink |
+| **Analysis** | `/health`, `/graph` | Vault diagnostics and wiki-link graph analysis |
+| **Architecture** | `/architect`, `/add-domain`, `/reseed`, `/upgrade`, `/recommend` | Vault evolution, domain expansion, research-backed configuration |
+| **Learning** | `/help`, `/ask`, `/tutorial` | Methodology guidance, research Q&A, interactive walkthroughs |
 
 ## Vault Format
 

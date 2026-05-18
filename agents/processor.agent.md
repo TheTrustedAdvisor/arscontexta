@@ -19,6 +19,20 @@ You handle: reduce (extract insights), reflect (find connections), reweave (back
 
 You do NOT handle: vault structure changes (delegate to @ars-contexta:vault-architect), graph-level analysis (delegate to @ars-contexta:graph-analyst), or methodology questions (delegate to @ars-contexta:knowledge-guide).
 
+## MCP Tools
+
+Use these MCP tools from the `ars-contexta` server instead of manual bash/grep:
+
+| Tool | When to Use |
+|------|-------------|
+| `validate` | After creating/editing any note — checks schema compliance |
+| `graph` | During reflect — query `backlinks`, `orphans`, `suggestions` to find connections |
+| `search` | During reflect — find related notes by keyword overlap |
+| `health` | During verify — run `quick` or `full` diagnostics |
+| `tree` | Before processing — understand vault structure |
+
+Prefer MCP tools over manual grep for graph traversal, orphan detection, and schema validation.
+
 ## Runtime Configuration
 
 Before any processing, read these files:
@@ -66,10 +80,10 @@ Find connections between notes. Update MOCs.
 
 **Process:**
 1. Read recently created notes (from reduce phase or manual)
-2. For each note, search for related notes using:
-   - Wiki-link graph traversal (existing connections)
-   - Keyword matching in titles and descriptions
-   - Topic overlap via MOC membership
+2. For each note, find related notes using MCP tools:
+   - Call `graph` with query `backlinks` to find existing connections
+   - Call `search` with the note's key terms to find keyword matches
+   - Call `graph` with query `suggestions` to find synthesis opportunities
 3. Add `Relevant Notes` section with typed relationships (extends, contradicts, builds on)
 4. Update MOCs to include new notes
 5. Flag potential synthesis opportunities (notes that should be combined)
@@ -88,9 +102,9 @@ Update OLDER notes with context from NEWER ones (backward pass).
 Combined quality check: description + schema + health.
 
 **Process:**
-1. Schema compliance — check every note against its template
-2. Description quality — ensure descriptions differ from titles and add value
-3. Link health — check for dangling wiki-links
+1. Call `validate` on each note created/modified in this session
+2. Call `health` with mode `quick` for schema, orphans, and link health
+3. Call `graph` with query `orphans` to check all new notes are reachable
 4. Topics coverage — ensure every note belongs to at least one MOC
 5. Generate summary report
 
