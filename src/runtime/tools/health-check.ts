@@ -1,6 +1,6 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join, basename } from 'node:path';
-import { parseFrontmatter, extractTitle, findNotesDir, MIN_DESCRIPTION_LENGTH } from './shared.js';
+import { parseFrontmatter, extractTitle, findNotesDir, findContentDirs, MIN_DESCRIPTION_LENGTH } from './shared.js';
 import { MAX_FILES } from './path-guard.js';
 
 interface HealthCheckOptions {
@@ -52,9 +52,10 @@ async function checkSchema(notes: Map<string, string>): Promise<DiagnosticResult
   };
 }
 
-async function checkOrphans(notes: Map<string, string>): Promise<DiagnosticResult> {
+async function checkOrphans(notes: Map<string, string>, allNotes?: Map<string, string>): Promise<DiagnosticResult> {
+  const linkSource = allNotes || notes;
   const allLinks = new Set<string>();
-  for (const content of notes.values()) {
+  for (const content of linkSource.values()) {
     const matches = content.match(/\[\[([^\]]+)\]\]/g);
     if (matches) matches.forEach(m => allLinks.add(m.slice(2, -2)));
   }
@@ -162,18 +163,27 @@ export async function healthCheck(options: HealthCheckOptions): Promise<string> 
     return 'No notes directory found. Initialize a vault first.';
   }
 
-  const notes = await loadMarkdownFiles(join(vaultPath, notesDir));
+  const contentDirs = await findContentDirs(vaultPath);
+  const allNotes = new Map<string, string>();
+  for (const dir of contentDirs) {
+    const dirNotes = await loadMarkdownFiles(join(vaultPath, dir));
+    for (const [file, content] of dirNotes) {
+      allNotes.set(`${dir}/${file}`, content);
+    }
+  }
+
+  const primaryNotes = await loadMarkdownFiles(join(vaultPath, notesDir));
 
   const results: DiagnosticResult[] = [];
 
   if (mode === 'quick' || mode === 'full') {
-    results.push(await checkSchema(notes));
-    results.push(await checkOrphans(notes));
-    results.push(await checkLinks(notes));
+    results.push(await checkSchema(primaryNotes));
+    results.push(await checkOrphans(primaryNotes, allNotes));
+    results.push(await checkLinks(allNotes));
   }
 
   if (mode === 'full') {
-    results.push(await checkDescriptions(notes));
+    results.push(await checkDescriptions(primaryNotes));
     results.push(await checkThreeSpace(vaultPath, notesDir));
   }
 

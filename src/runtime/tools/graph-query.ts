@@ -1,6 +1,6 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join, basename } from 'node:path';
-import { extractWikiLinks, extractTitle, parseFrontmatter, findNotesDir } from './shared.js';
+import { extractWikiLinks, extractTitle, parseFrontmatter, findNotesDir, findContentDirs } from './shared.js';
 import { MAX_FILES, MAX_FILE_SIZE } from './path-guard.js';
 
 interface GraphQueryOptions {
@@ -47,7 +47,14 @@ export async function graphQuery(options: GraphQueryOptions): Promise<string> {
     return 'No notes directory found. Initialize a vault first.';
   }
 
-  const notes = await loadNotes(vaultPath, notesDir);
+  const contentDirs = await findContentDirs(vaultPath);
+  const notes = new Map<string, NoteInfo>();
+  for (const dir of contentDirs) {
+    const dirNotes = await loadNotes(vaultPath, dir);
+    for (const [title, info] of dirNotes) {
+      if (!notes.has(title)) notes.set(title, info);
+    }
+  }
 
   switch (query) {
     case 'orphans':
@@ -57,7 +64,7 @@ export async function graphQuery(options: GraphQueryOptions): Promise<string> {
     case 'density':
       return measureDensity(notes);
     case 'stats':
-      return vaultStats(notes, notesDir);
+      return vaultStats(notes, contentDirs);
     case 'traverse':
       return traverseNote(notes, notePath);
     case 'clusters':
@@ -143,7 +150,7 @@ function measureDensity(notes: Map<string, NoteInfo>): string {
   return lines.join('\n');
 }
 
-function vaultStats(notes: Map<string, NoteInfo>, notesDir: string): string {
+function vaultStats(notes: Map<string, NoteInfo>, contentDirs: string[]): string {
   let totalLinks = 0;
   let mocCount = 0;
   const allLinkedTitles = new Set<string>();
@@ -161,7 +168,7 @@ function vaultStats(notes: Map<string, NoteInfo>, notesDir: string): string {
   const avgDegree = notes.size > 0 ? (totalLinks / notes.size).toFixed(1) : '0';
 
   return [
-    `Vault Statistics (${notesDir}/)`,
+    `Vault Statistics (${contentDirs.join(', ')})`,
     `  Notes: ${notes.size}`,
     `  Total links: ${totalLinks}`,
     `  Average degree: ${avgDegree}`,

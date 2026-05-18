@@ -31,6 +31,7 @@ export function extractWikiLinks(content: string): string[] {
 }
 
 const NOTES_DIR_CANDIDATES = ['notes', 'reflections', 'concepts', 'decisions', 'claims', 'ideas', 'memories'];
+const CONTENT_DIR_CANDIDATES = [...NOTES_DIR_CANDIDATES, 'maps', 'lessons'];
 
 export async function findNotesDir(vaultPath: string): Promise<string | null> {
   try {
@@ -42,4 +43,17 @@ export async function findNotesDir(vaultPath: string): Promise<string | null> {
     }
   } catch { /* directory doesn't exist */ }
   return null;
+}
+
+export async function findContentDirs(vaultPath: string): Promise<string[]> {
+  const found: string[] = [];
+  try {
+    const entries = await readdir(vaultPath, { withFileTypes: true });
+    for (const candidate of CONTENT_DIR_CANDIDATES) {
+      if (entries.some(e => e.isDirectory() && e.name === candidate)) {
+        found.push(candidate);
+      }
+    }
+  } catch { /* directory doesn't exist */ }
+  return found;
 }
