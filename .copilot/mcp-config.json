@@ -3,7 +3,7 @@
     "ars-contexta": {
       "command": "node",
       "args": ["dist/server.js"],
-      "description": "Ars Contexta vault operations: init, validate, graph query, tree inject, health check"
+      "description": "Ars Contexta vault operations: setup, validate, graph, tree, health, search"
     }
   }
 }
